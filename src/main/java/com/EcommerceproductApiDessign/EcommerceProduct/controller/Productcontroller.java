@@ -1,8 +1,6 @@
 package com.EcommerceproductApiDessign.EcommerceProduct.controller;
 
-import com.EcommerceproductApiDessign.EcommerceProduct.dtohelpers.AddProductDTO;
-import com.EcommerceproductApiDessign.EcommerceProduct.dtohelpers.PaginatedResponse;
-import com.EcommerceproductApiDessign.EcommerceProduct.dtohelpers.ProductResponseDTO;
+import com.EcommerceproductApiDessign.EcommerceProduct.dtohelpers.*;
 import com.EcommerceproductApiDessign.EcommerceProduct.entity.Productentity;
 import com.EcommerceproductApiDessign.EcommerceProduct.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +33,30 @@ public class Productcontroller {
 
         PaginatedResponse<ProductResponseDTO> response = productService.getallproducts(category,brand,minPrice,maxPrice,page,size,sortBy,direction);
         return new ResponseEntity<PaginatedResponse<ProductResponseDTO>>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/product/{productid}")
+    public ResponseEntity<ProductResponseDTO> getproductById(@PathVariable Long productid){
+        ProductResponseDTO response=productService.getByProductid(productid);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/product/{productid}")
+    public ResponseEntity<String> deleteproduct(@PathVariable Long productid){
+        String response= productService.deleteByproductid(productid);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/product/{productid}/price")
+    public ResponseEntity<String> updateproductprice(@PathVariable Long productid, @RequestBody PriceUpdateDTO productDTO){
+        String response= productService.updateProductprice(productid,productDTO);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/product/{productid}/stock")
+    public ResponseEntity<String> updateproductstock(@PathVariable Long productid, @RequestBody UpdateStockDTO stockDTO){
+        String response= productService.updateproductstock(productid,stockDTO);
+        return ResponseEntity.ok().body(response);
     }
 }

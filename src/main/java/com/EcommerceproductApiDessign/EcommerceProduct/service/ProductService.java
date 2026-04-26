@@ -1,8 +1,6 @@
 package com.EcommerceproductApiDessign.EcommerceProduct.service;
 
-import com.EcommerceproductApiDessign.EcommerceProduct.dtohelpers.AddProductDTO;
-import com.EcommerceproductApiDessign.EcommerceProduct.dtohelpers.PaginatedResponse;
-import com.EcommerceproductApiDessign.EcommerceProduct.dtohelpers.ProductResponseDTO;
+import com.EcommerceproductApiDessign.EcommerceProduct.dtohelpers.*;
 import com.EcommerceproductApiDessign.EcommerceProduct.entity.Productentity;
 import com.EcommerceproductApiDessign.EcommerceProduct.repository.ProductRepository;
 import com.EcommerceproductApiDessign.EcommerceProduct.specifications.Productspecification;
@@ -90,4 +88,57 @@ public class ProductService {
                 .totalPages(dtopage.getTotalPages())
                 .build();
     }
+
+
+    public ProductResponseDTO getByProductid(Long productid){
+        Productentity product=productRepository.findById(productid).orElse(null);
+        if(product==null) {
+            throw new RuntimeException("product not found");
+        }
+        return ProductResponseDTO.builder()
+                .productname(product.getProductname())
+                .description(product.getDescription())
+                .price(product.getPrice())
+                .category(product.getCategory())
+                .imageurl(product.getImageurl())
+                .brand(product.getBrand())
+                .totalbuy(product.getTotalbuy())
+                .ratings(product.getRatings())
+                .stockQuantity(product.getStockQuantity())
+                .build();
+    }
+
+    public String deleteByproductid(Long productid){
+        Productentity product=productRepository.findById(productid).orElse(null);
+        if(product==null) {
+            throw new RuntimeException("product not found");
+        }
+        productRepository.deleteById(productid);
+        return "Deleted Successfully";
+    }
+
+    public String updateProductprice(Long productid, PriceUpdateDTO priceUpdateDTO){
+        Productentity product=productRepository.findById(productid).orElse(null);
+        if(product==null) {
+            throw new RuntimeException("product not found");
+        }
+        product.setPrice(priceUpdateDTO.getPrice());
+        product.setUpdatedAt(LocalDateTime.now());
+        productRepository.save(product);
+
+        return "Updated Successfully";
+    }
+
+    public String updateproductstock(Long productid, UpdateStockDTO updateStockDTO){
+        Productentity product=productRepository.findById(productid).orElse(null);
+        if(product==null) {
+            throw new RuntimeException("product not found");
+        }
+        product.setStockQuantity(product.getStockQuantity()+updateStockDTO.getQuantity());
+        product.setInStock(product.getStockQuantity()>0);
+        product.setUpdatedAt(LocalDateTime.now());
+        productRepository.save(product);
+        return "Product Stock Updated Successfully";
+    }
+
 }
